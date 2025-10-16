@@ -1,0 +1,186 @@
+.eta-banner {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  margin-bottom: 16px;
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.eta-banner.nearby {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.eta-banner.arrived {
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+  }
+}
+
+.eta-banner.in-progress {
+  background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+}
+
+.eta-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 12px;
+}
+
+.eta-time {
+  flex: 1;
+  text-align: center;
+}
+
+.eta-value {
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 1;
+  margin-bottom: 4px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.eta-label {
+  font-size: 13px;
+  opacity: 0.9;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 500;
+}
+
+.eta-distance {
+  flex: 1;
+  text-align: center;
+  border-left: 1px solid rgba(255, 255, 255, 0.3);
+  border-right: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.distance-value {
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.distance-label {
+  font-size: 12px;
+  opacity: 0.9;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.eta-clock {
+  flex: 1;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.clock-icon {
+  font-size: 20px;
+}
+
+.clock-time {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.eta-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  background: white;
+  border-radius: 50%;
+  animation: blink 1.5s ease-in-out infinite;
+}
+
+@keyframes blink {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
+
+@media (max-width: 768px) {
+  .eta-banner {
+    padding: 16px;
+  }
+
+  .eta-content {
+    gap: 12px;
+  }
+
+  .eta-value {
+    font-size: 28px;
+  }
+
+  .eta-label {
+    font-size: 11px;
+  }
+
+  .distance-value {
+    font-size: 20px;
+  }
+
+  .distance-label {
+    font-size: 11px;
+  }
+
+  .clock-time {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .eta-content {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .eta-distance {
+    border-left: none;
+    border-right: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.3);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 12px 0;
+  }
+
+  .eta-clock {
+    width: 100%;
+  }
+}

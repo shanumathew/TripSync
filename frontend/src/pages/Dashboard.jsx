@@ -1,9 +1,13 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { rideAPI } from '../services/rideService'
+import MapContainer from '../components/maps/MapContainer'
+import DashboardMap from '../components/maps/DashboardMap'
 
 const Dashboard = () => {
   const { user } = useAuth()
+  const navigate = useNavigate()
   
   // Ride posting state
   const [rideText, setRideText] = useState('')
@@ -113,12 +117,20 @@ const Dashboard = () => {
   return (
     <div className="container" style={{ paddingTop: '2rem', paddingBottom: '2rem' }}>
       <div style={styles.welcomeSection}>
-        <h1 style={styles.greeting}>
-          {getGreeting()}, {user?.name}! 👋
-        </h1>
-        <p style={styles.university}>
-          {user?.university}
-        </p>
+        <div>
+          <h1 style={styles.greeting}>
+            {getGreeting()}, {user?.name}! 👋
+          </h1>
+          <p style={styles.university}>
+            {user?.university}
+          </p>
+        </div>
+        <button 
+          onClick={() => navigate('/book-ride')}
+          style={styles.bookRideBtn}
+        >
+          🚗 Book a Ride
+        </button>
       </div>
 
       <div style={styles.grid}>
@@ -148,6 +160,19 @@ const Dashboard = () => {
             {user?.is_verified ? 'Verified' : 'Pending Verification'}
           </div>
         </div>
+      </div>
+
+      {/* Nearby Drivers Map */}
+      <div style={{ marginBottom: '2rem' }}>
+        <MapContainer>
+          <DashboardMap 
+            searchRadius={5}
+            onDriverSelect={(driver) => {
+              console.log('Selected driver:', driver);
+              // You can use this to pre-fill ride details
+            }}
+          />
+        </MapContainer>
       </div>
 
       <div className="card" style={styles.mainCard}>
@@ -269,7 +294,23 @@ const Dashboard = () => {
 const styles = {
   welcomeSection: {
     marginBottom: '2rem',
-    textAlign: 'center',
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+    gap: '1rem',
+  },
+  bookRideBtn: {
+    padding: '12px 24px',
+    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+    color: 'white',
+    border: 'none',
+    borderRadius: '12px',
+    fontSize: '16px',
+    fontWeight: '600',
+    cursor: 'pointer',
+    transition: 'all 0.3s',
+    boxShadow: '0 4px 12px rgba(102, 126, 234, 0.3)',
   },
   greeting: {
     fontSize: '2.5rem',

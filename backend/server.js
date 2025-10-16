@@ -1,4 +1,5 @@
 const express = require('express');
+const http = require('http');
 const cors = require('cors');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
@@ -7,9 +8,13 @@ const logger = require('./src/middleware/logger');
 const { errorHandler } = require('./src/middleware/errorHandler');
 const routes = require('./src/routes');
 const db = require('./src/config/database');
+const { initializeSocketServer } = require('./src/socket/socket');
 
 // Initialize Express app
 const app = express();
+
+// Create HTTP server (needed for Socket.io)
+const server = http.createServer(app);
 
 // ============================================
 // MIDDLEWARE SETUP
@@ -71,8 +76,12 @@ const startServer = async () => {
     await db.query('SELECT NOW()');
     console.log('✅ Database connection verified');
 
+    // Initialize Socket.io
+    initializeSocketServer(server);
+    console.log('✅ Socket.io server initialized');
+
     // Start the server
-    const server = app.listen(PORT, () => {
+    server.listen(PORT, () => {
       console.log('');
       console.log('🚀 ========================================');
       console.log(`🚀 TripSync Backend Server Started`);
@@ -80,6 +89,7 @@ const startServer = async () => {
       console.log(`🚀 Port: ${PORT}`);
       console.log(`🚀 URL: http://localhost:${PORT}`);
       console.log(`🚀 Health Check: http://localhost:${PORT}/api/health`);
+      console.log(`🚀 Socket.io: Enabled`);
       console.log('🚀 ========================================');
       console.log('');
     });

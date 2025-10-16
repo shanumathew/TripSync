@@ -20,6 +20,8 @@ router.get('/', (req, res) => {
       health: '/api/health',
       auth: '/api/auth',
       rides: '/api/rides',
+      tracking: '/api/tracking',
+      vehicles: '/api/vehicles',
       matches: '/api/matches',
       users: '/api/users',
     },
@@ -30,6 +32,7 @@ router.get('/', (req, res) => {
 const authRoutes = require('./auth.routes');
 const rideRoutes = require('./ride.routes');
 const vehicleRoutes = require('./vehicle.routes');
+const trackingRoutes = require('./tracking.routes');
 // const matchRoutes = require('./match.routes');
 // const userRoutes = require('./user.routes');
 
@@ -37,6 +40,7 @@ const vehicleRoutes = require('./vehicle.routes');
 router.use('/auth', authRoutes);
 router.use('/rides', rideRoutes);
 router.use('/vehicles', vehicleRoutes);
+router.use('/tracking', trackingRoutes);
 // router.use('/matches', matchRoutes);
 // router.use('/users', userRoutes);
 

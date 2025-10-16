@@ -8,6 +8,8 @@ import Dashboard from './pages/Dashboard'
 import Profile from './pages/Profile'
 import MyRides from './pages/MyRides'
 import MyVehicles from './pages/MyVehicles'
+import BookRideSimple from './pages/BookRideSimple'
+import PassengerTracking from './pages/tracking/PassengerTracking'
 import ProtectedRoute from './components/ProtectedRoute'
 
 function App() {
@@ -50,6 +52,22 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <MyVehicles />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/book-ride"
+                element={
+                  <ProtectedRoute>
+                    <BookRideSimple />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/track/:rideId"
+                element={
+                  <ProtectedRoute>
+                    <PassengerTracking />
                   </ProtectedRoute>
                 }
               />

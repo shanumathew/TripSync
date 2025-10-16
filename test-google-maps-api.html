@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Google Maps API Key Tester</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 {
+            color: #1a1a1a;
+            margin-bottom: 10px;
+        }
+        .status {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-weight: 500;
+        }
+        .success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        .warning {
+            background: #fff3cd;
+            border: 1px solid #ffeeba;
+            color: #856404;
+        }
+        .info {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+        }
+        #map {
+            width: 100%;
+            height: 400px;
+            border-radius: 12px;
+            margin: 20px 0;
+            border: 2px solid #e0e0e0;
+        }
+        .test-section {
+            margin: 25px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+        .test-section h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 15px;
+            margin: 8px 0;
+        }
+        button {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            margin: 5px;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        .checklist {
+            list-style: none;
+            padding: 0;
+        }
+        .checklist li {
+            padding: 10px;
+            margin: 8px 0;
+            border-radius: 6px;
+            background: white;
+        }
+        .checklist li::before {
+            content: "⏳ ";
+            margin-right: 8px;
+        }
+        .checklist li.pass::before {
+            content: "✅ ";
+        }
+        .checklist li.fail::before {
+            content: "❌ ";
+        }
+        code {
+            background: #f5f5f5;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            color: #e83e8c;
+        }
+        .fix-steps {
+            background: #e8f4f8;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #0288d1;
+            margin: 15px 0;
+        }
+        .fix-steps h4 {
+            margin-top: 0;
+            color: #0288d1;
+        }
+        .fix-steps ol {
+            margin: 10px 0;
+        }
+        .fix-steps li {
+            margin: 8px 0;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🗺️ Google Maps API Key Tester</h1>
+        <p>This tool helps you diagnose Google Maps API key issues for TripSync.</p>
+
+        <div id="apiKeyDisplay" class="info">
+            <strong>API Key:</strong> <code id="apiKeyValue">Loading...</code>
+        </div>
+
+        <div id="statusContainer"></div>
+
+        <div class="test-section">
+            <h3>✅ API Tests Checklist</h3>
+            <ul class="checklist" id="checklist">
+                <li id="check-load">Google Maps Script Loading</li>
+                <li id="check-maps">Maps JavaScript API</li>
+                <li id="check-places">Places API</li>
+                <li id="check-directions">Directions API</li>
+                <li id="check-geocoding">Geocoding API</li>
+            </ul>
+        </div>
+
+        <div class="test-section">
+            <h3>🗺️ Test Map</h3>
+            <div id="map"></div>
+            <div id="mapStatus"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>📍 Test Places Autocomplete</h3>
+            <input id="autocompleteTest" type="text" placeholder="Start typing a location (e.g., 'Connaught Place')..." />
+            <div id="autocompleteStatus"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>🧭 Test Directions</h3>
+            <button onclick="testDirections()">Test Directions API</button>
+            <div id="directionsStatus"></div>
+        </div>
+
+        <div id="fixSteps" style="display:none;" class="fix-steps">
+            <h4>🔧 How to Fix This</h4>
+            <ol>
+                <li><strong>Go to Google Cloud Console:</strong> <a href="https://console.cloud.google.com" target="_blank">console.cloud.google.com</a></li>
+                <li><strong>Select your project</strong> (or create a new one)</li>
+                <li><strong>Enable Billing:</strong>
+                    <ul>
+                        <li>Go to "Billing" in the left menu</li>
+                        <li>Link a billing account (Google gives $200 free credit)</li>
+                        <li>⚠️ Without billing, maps won't load!</li>
+                    </ul>
+                </li>
+                <li><strong>Enable Required APIs:</strong>
+                    <ul>
+                        <li>Go to "APIs & Services" → "Library"</li>
+                        <li>Search and enable each:
+                            <ul>
+                                <li>✅ Maps JavaScript API</li>
+                                <li>✅ Places API</li>
+                                <li>✅ Directions API</li>
+                                <li>✅ Geocoding API</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li><strong>Create/Update API Key:</strong>
+                    <ul>
+                        <li>Go to "APIs & Services" → "Credentials"</li>
+                        <li>Click "Create Credentials" → "API Key"</li>
+                        <li>Copy the API key</li>
+                    </ul>
+                </li>
+                <li><strong>Configure API Key Restrictions (Optional but Recommended):</strong>
+                    <ul>
+                        <li>Click on your API key to edit</li>
+                        <li>Under "Application restrictions":
+                            <ul>
+                                <li>Select "HTTP referrers (web sites)"</li>
+                                <li>Add: <code>http://localhost:*/*</code></li>
+                                <li>Add: <code>http://127.0.0.1:*/*</code></li>
+                                <li>Add your production domain when ready</li>
+                            </ul>
+                        </li>
+                        <li>Under "API restrictions":
+                            <ul>
+                                <li>Select "Restrict key"</li>
+                                <li>Select: Maps JavaScript API, Places API, Directions API, Geocoding API</li>
+                            </ul>
+                        </li>
+                        <li>Click "Save"</li>
+                    </ul>
+                </li>
+                <li><strong>Update TripSync .env file:</strong>
+                    <ul>
+                        <li>Open: <code>frontend/.env</code></li>
+                        <li>Update: <code>VITE_GOOGLE_MAPS_API_KEY=your_new_api_key</code></li>
+                        <li>Restart frontend: <code>npm run dev</code></li>
+                    </ul>
+                </li>
+                <li><strong>Wait 5 minutes</strong> for API key changes to propagate</li>
+                <li><strong>Refresh this page</strong> and test again</li>
+            </ol>
+        </div>
+
+        <div class="info" style="margin-top: 30px;">
+            <strong>💡 Note:</strong> The most common issue is <strong>billing not enabled</strong>. Google requires a billing account even though you get $200 free credit per month. Most small apps stay within the free tier.
+        </div>
+    </div>
+
+    <script>
+        const API_KEY = 'AIzaSyCCql8x2VGsXxfcy6gaqnpgtbljBLX2p4s';
+        let map, autocomplete, directionsService;
+
+        document.getElementById('apiKeyValue').textContent = API_KEY;
+
+        // Load Google Maps
+        function loadGoogleMaps() {
+            const script = document.createElement('script');
+            script.src = `https://maps.googleapis.com/maps/api/js?key=${API_KEY}&libraries=places,geometry&callback=initTests`;
+            script.async = true;
+            script.defer = true;
+            script.onerror = () => {
+                updateStatus('error', '❌ Failed to load Google Maps script. Check your internet connection and API key.');
+                document.getElementById('check-load').className = 'fail';
+                showFixSteps();
+            };
+            document.head.appendChild(script);
+        }
+
+        function updateStatus(type, message) {
+            const container = document.getElementById('statusContainer');
+            container.innerHTML = `<div class="status ${type}">${message}</div>`;
+        }
+
+        function showFixSteps() {
+            document.getElementById('fixSteps').style.display = 'block';
+        }
+
+        window.initTests = function() {
+            document.getElementById('check-load').className = 'pass';
+            updateStatus('success', '✅ Google Maps script loaded successfully!');
+
+            // Test Maps API
+            try {
+                map = new google.maps.Map(document.getElementById('map'), {
+                    center: { lat: 28.6139, lng: 77.2090 },
+                    zoom: 13
+                });
+                document.getElementById('check-maps').className = 'pass';
+                document.getElementById('mapStatus').innerHTML = '<div class="success">✅ Map loaded successfully!</div>';
+            } catch (err) {
+                document.getElementById('check-maps').className = 'fail';
+                document.getElementById('mapStatus').innerHTML = `<div class="error">❌ Map failed: ${err.message}</div>`;
+                showFixSteps();
+            }
+
+            // Test Places API
+            try {
+                const input = document.getElementById('autocompleteTest');
+                autocomplete = new google.maps.places.Autocomplete(input, {
+                    componentRestrictions: { country: 'in' }
+                });
+                
+                autocomplete.addListener('place_changed', () => {
+                    const place = autocomplete.getPlace();
+                    if (place.geometry) {
+                        document.getElementById('autocompleteStatus').innerHTML = 
+                            `<div class="success">✅ Selected: ${place.formatted_address || place.name}</div>`;
+                        map.setCenter(place.geometry.location);
+                        new google.maps.Marker({
+                            map: map,
+                            position: place.geometry.location
+                        });
+                    }
+                });
+
+                document.getElementById('check-places').className = 'pass';
+                document.getElementById('autocompleteStatus').innerHTML = '<div class="info">Type a location to test autocomplete...</div>';
+            } catch (err) {
+                document.getElementById('check-places').className = 'fail';
+                document.getElementById('autocompleteStatus').innerHTML = `<div class="error">❌ Places API failed: ${err.message}</div>`;
+                showFixSteps();
+            }
+
+            // Test Directions API
+            directionsService = new google.maps.DirectionsService();
+        };
+
+        window.testDirections = function() {
+            document.getElementById('directionsStatus').innerHTML = '<div class="warning">⏳ Testing Directions API...</div>';
+            
+            const request = {
+                origin: { lat: 28.6139, lng: 77.2090 },
+                destination: { lat: 28.6129, lng: 77.2295 },
+                travelMode: 'DRIVING'
+            };
+
+            directionsService.route(request, (result, status) => {
+                if (status === 'OK') {
+                    document.getElementById('check-directions').className = 'pass';
+                    const route = result.routes[0].legs[0];
+                    document.getElementById('directionsStatus').innerHTML = 
+                        `<div class="success">✅ Directions API works! Distance: ${route.distance.text}, Duration: ${route.duration.text}</div>`;
+                    
+                    new google.maps.DirectionsRenderer({
+                        map: map,
+                        directions: result
+                    });
+                } else {
+                    document.getElementById('check-directions').className = 'fail';
+                    document.getElementById('directionsStatus').innerHTML = 
+                        `<div class="error">❌ Directions API failed: ${status}</div>`;
+                    showFixSteps();
+                }
+            });
+        };
+
+        // Test Geocoding (indirect test)
+        window.addEventListener('load', () => {
+            loadGoogleMaps();
+            
+            // Listen for Google Maps errors
+            window.gm_authFailure = function() {
+                updateStatus('error', '❌ API Key Authentication Failed! This usually means billing is not enabled or the API key is invalid.');
+                document.getElementById('check-load').className = 'fail';
+                showFixSteps();
+            };
+        });
+    </script>
+</body>
+</html>
